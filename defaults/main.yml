@@ -8,17 +8,24 @@ firewall_strict: no
 # Allow all ICMP traffic. Disabled if firewall_strict is True.
 firewall_allow_icmp: yes
 
+firewall_firewalld_default_zone:
+  []
+  # - zone:
+  #   interface:
+
 firewall_allowed_tcp_ports:
   - 22
 firewall_allowed_udp_ports:
   - 161
-firewall_rich_rules: []
+firewall_rich_rules:
+  []
   # - source:
   #   protocol:
   #   dest_port:
   #   new: yes
 
-firewall_nat_rules: []
+firewall_nat_rules:
+  []
   # - family: ipv4
   #   original_port: 514
   #   protocol: udp
@@ -26,7 +33,8 @@ firewall_nat_rules: []
 
 firewall_custom_iptables_rules: []
 
-firewall_firewalld_rules: []
+firewall_firewalld_rules:
+  []
   # - immediate:
   #   interface:
   #   masquerade:
@@ -38,13 +46,3 @@ firewall_firewalld_rules: []
   #   state: enabled
   #   timeout:
   #   zone:
-
-# macOS
-firewall_custom_pf_macros: []
-firewall_custom_pf_table_rules: []
-firewall_custom_pf_options: []
-firewall_custom_pf_normalization_rules: []
-firewall_custom_pf_queuing_rules: []
-firewall_custom_pf_filter_rules: []
-
-firewall_alf_global_state: on

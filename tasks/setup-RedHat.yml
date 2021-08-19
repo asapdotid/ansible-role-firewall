@@ -1,5 +1,5 @@
 - name: RHEL | Install {{ _firewall_name }}
-  yum:
+  ansible.builtin.yum:
     name: "{{ _firewall_name }}"
     state: latest
 

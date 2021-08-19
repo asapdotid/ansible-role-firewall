@@ -1,8 +1,16 @@
 - name: FIREWALLD | Start and enable firewalld
-  service:
+  ansible.builtin.service:
     name: "{{ _firewall_name }}"
     enabled: yes
     state: started
+  tags:
+    - firewall
+    - firewall_config
+
+- name: Add interconnect interface to internal zone
+  ansible.builtin.command: "firewall-cmd --zone={{ item.zone }} --permanent --add-interface={{ item.interface }}"
+  with_items: "{{ firewall_firewalld_default_zone }}"
+  notify: restart firewall
   tags:
     - firewall
     - firewall_config

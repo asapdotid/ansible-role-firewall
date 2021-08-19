@@ -1,0 +1,20 @@
+---
+- name: install epel release on centos
+  yum:
+    name: epel-release
+  when: (ansible_facts['distribution'] == "CentOS")
+
+- name: install system packages and utils on centos
+  yum:
+    name: []
+    state: "present"
+    update_cache: true
+  changed_when: false
+
+- name: install util-linux-use on centos
+  yum:
+    name: yum-utils
+    state: "present"
+    update_cache: true
+  changed_when: false
+  when: (ansible_facts['distribution'] == "CentOS")

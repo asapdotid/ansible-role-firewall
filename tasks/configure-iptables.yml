@@ -1,5 +1,5 @@
 - name: IPTABLES | Copy iptables template
-  template:
+  ansible.builtin.template:
     src: "{{ _firewall_template }}.j2"
     dest: "{{ _firewall_config_dir }}/{{ _firewall_config_file }}"
     backup: yes
@@ -13,7 +13,7 @@
     - firewall_config
 
 - name: IPTABLES | Ensure iptables is enabled and started
-  service:
+  ansible.builtin.service:
     name: iptables
     enabled: yes
     state: started
