@@ -8,7 +8,7 @@
     - firewall_config
 
 - name: Add interconnect interface to internal zone
-  ansible.builtin.command: "firewall-cmd --zone={{ item.zone }} --permanent --add-interface={{ item.interface }}"
+  ansible.builtin.command: "firewall-cmd --zone={{ item.zone | default(omit) }} --permanent --add-interface={{ item.interface | default(omit) }}"
   with_items: "{{ firewall_firewalld_default_zone }}"
   notify: restart firewall
   tags:
