@@ -1,48 +1,30 @@
-# Set default policy for INPUT and ACCEPT chains to DROP
-firewall_default_drop: no
+---
+# Firewalld
+firewalld_purge_services: false
+firewalld_default_zone: "public"
+firewalld_zone_interfaces: []
 
-# Set default policy to DROP and only allow certain ICMP types
-# instead of all ICMP traffic
-firewall_strict: no
+# UFW
+ufw_default_incoming_policy: deny
+ufw_default_outgoing_policy: allow
 
-# Allow all ICMP traffic. Disabled if firewall_strict is True.
-firewall_allow_icmp: yes
+ufw_logging: "off"
 
-firewall_firewalld_default_zone:
-  []
-  # - zone:
-  #   interface:
+ufw_rules:
+  - rule: allow
+    interface: "{{ ansible_default_ipv4['interface'] }}"
+    to_port: 22
+    protocol: tcp
 
-firewall_allowed_tcp_ports:
-  - 22
-firewall_allowed_udp_ports:
-  - 161
-firewall_rich_rules:
-  []
-  # - source:
-  #   protocol:
-  #   dest_port:
-  #   new: yes
-
-firewall_nat_rules:
-  []
-  # - family: ipv4
-  #   original_port: 514
-  #   protocol: udp
-  #   translated_port: 5140
-
-firewall_custom_iptables_rules: []
-
-firewall_firewalld_rules:
-  []
-  # - immediate:
-  #   interface:
-  #   masquerade:
-  #   permanent:
-  #   port:                       # If port is specificed, protocol is required
-  #   rich_rule:
-  #   service:
-  #   source:
-  #   state: enabled
-  #   timeout:
-  #   zone:
+# /etc/default/ufw
+ufw_etc_default_ipv6: true
+ufw_etc_default_default_input_policy: DROP
+ufw_etc_default_default_output_policy: ACCEPT
+ufw_etc_default_default_forward_policy: DROP
+ufw_etc_default_default_application_policy: SKIP
+ufw_etc_default_manage_builtins: false
+ufw_etc_default_ipt_sysctl: /etc/ufw/sysctl.conf
+ufw_etc_default_ipt_modules:
+  - nf_conntrack_ftp
+  - nf_nat_ftp
+  - nf_conntrack_netbios_ns
