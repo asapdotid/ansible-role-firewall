@@ -1,29 +1,26 @@
 galaxy_info:
   role_name: firewall
-  author: Sam Doran
-  description: Install and configure the firewall on Linux and macOS
+  author: Asapdotid
+  description: Install and configure the firewall on Linux
   company: Ansible by Red Hat
-  license: Apache 2.0
+  license: MIT
   min_ansible_version: 2.9
 
   platforms:
     - name: EL
       versions:
-        - 6
         - 7
         - 8
-
-    - name: macOS
+    - name: Ubuntu
       versions:
-        - all
+        - 18
+        - 20
 
   galaxy_tags:
     - system
     - firewall
-    - bpf
-    - iptables
+    - ufw
     - firewalld
     - linux
-    - macos
 
 dependencies: []

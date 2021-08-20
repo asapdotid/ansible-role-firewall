@@ -1,9 +1,13 @@
-- name: reload firewall
+- name: reload firewalld
   service:
-    name: "{{ _firewall_name }}"
+    name: firewalld
     state: reloaded
 
-- name: restart firewall
+- name: restart firewalld
   service:
-    name: "{{ _firewall_name }}"
+    name: firewalld
     state: restarted
+
+- name: reload ufw
+  ufw:
+    state: reloaded

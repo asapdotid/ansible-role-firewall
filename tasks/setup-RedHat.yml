@@ -1,28 +1,13 @@
 ---
-- name: RHEL | Ensure firewalld is installed
+- name: ensure firewalld is installed
   ansible.builtin.yum:
-    name: "{{ _firewall_name }}"
+    name: firewalld
     state: present
-  tags:
-    - firewall
+  tags: firewalld
 
-- name: RHEL | Install {{ _firewall_name }}
-  ansible.builtin.yum:
-    name: "{{ _firewall_name }}"
-    state: latest
-
-- name: RHEL | Ensure firewalld is enabled and started
+- name: ensure firewalld is enabled and started
   ansible.builtin.service:
-    name: "{{ _firewall_name }}"
+    name: firewalld
     enabled: yes
     state: started
-  tags:
-    - firewall
-
-- name: RHEL | Set firewall template name (XenServer)
-  set_fact:
-    _firewall_template: "iptables-{{ ansible_facts.distribution }}"
-  when: ansible_facts.distribution == 'XenServer'
-  tags:
-    - firewall
-    - firewall_config
+  tags: firewalld
