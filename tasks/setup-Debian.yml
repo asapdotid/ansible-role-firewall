@@ -1,17 +1,17 @@
 - name: DEBIAN | Install iptables
-  apt:
+  ansible.builtin.apt:
     name: iptables
     state: latest
   tags:
     - firewall
 
 - name: DEBIAN | Copy iptables load script
-  template:
+  ansible.builtin.template:
     src: iptablesload.j2
     dest: /etc/if-pre-up.d/iptablesload
     owner: root
     group: root
-    mode: '0700'
+    mode: "0700"
   tags:
     - firewall
     - firewall_config

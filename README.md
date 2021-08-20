@@ -1,61 +1,63 @@
-Firewall
-=========
-[![Galaxy](https://img.shields.io/badge/galaxy-samdoran.firewall-blue.svg?style=flat)](https://galaxy.ansible.com/samdoran/firewall)
-[![Build Status](https://dev.azure.com/samdoran/ansible-role-firewall/_apis/build/status/samdoran.ansible-role-firewall?branchName=main)](https://dev.azure.com/samdoran/ansible-role-firewall/_build/latest?definitionId=1&branchName=main)
+<p align="center"> <img src="https://user-images.githubusercontent.com/34257858/129839002-15e3f2c7-3f75-46d4-afae-0fd207d7fdde.png" width="100" height="100"></p>
 
-This role will install and configure the firewall. It supports `iptables`, `firewalld`, and `pf`.
+<h1 align="center">
+    Ansible Role Firewall
+</h1>
 
-For Ubuntu and RHEL/CentOS 6, an `iptables` template is copied and the iptables service is invoked. For RHEL/CentOS 7 or later, the `firewalld` module is used to configure the firewall.
+<p align="center" style="font-size: 1.2rem;">
+    This role will install and configure the firewall. It supports `iptables`, `firewalld`.
 
-For macOS, a `pf.conf` template is used. The [application firewall][_alf] can be disabled or enabled. If enabled, stealth mode will be disabled since the `pf.conf` template manages the same rules set my stealth mode.
+    For Ubuntu and RHEL/CentOS 6, an `iptables` template is copied and the iptables service is invoked. For RHEL/CentOS 7 or later, the `firewalld` module is used to configure the firewall.
 
-`firewalld` rules are currently _additive_ and will not "clean up" the firewall on a running system.
+    `firewalld` rules are currently _additive_ and will not "clean up" the firewall on a running system.
 
-Dependencies
-------------
+</p>
+
+<p align="center">
+
+<a href="https://www.ansible.com">
+  <img src="https://img.shields.io/badge/Ansible-2.10-green?style=flat&logo=ansible" alt="Ansible">
+</a>
+<a href="LICENSE.md">
+  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="Licence">
+</a>
+<a href="https://ubuntu.com/">
+  <img src="https://img.shields.io/badge/ubuntu-20.x-orange?style=flat&logo=ubuntu" alt="Distribution">
+</a>
+<a href="https://www.centos.org/">
+  <img src="https://img.shields.io/badge/CentOS-8-green?style=flat&logo=centos" alt="Distribution">
+</a>
+
+## Dependencies
 
 - `ansible.posix` collection
 
-Role Variables
---------------
+## Role Variables
 
 These variables apply to all firewall types:
 
-|   Name               | Default Value | Description                                                      |
-|----------------------|---------------|------------------------------------------------------------------|
-| `firewall_strict`    | `false`         | Set default policy to `DROP` and restrict types of ICMP traffic  |
-| `firewall_default_drop`    | `false`  | Set default policy to `DROP`  |
-| `firewall_allow_icmp` | `true` | Allow all ICMP traffic. Has no affect if `firewall_strict` is `True` |
-| `firewall_allowed_tcp_ports` | `['22']` | List of allowed TCP ports |
-| `firewall_allowed_udp_ports` | `['161'] `| List of allowed UDP ports |
-| `firewall_rich_rules` | `[]` | Specify a source IP and destination port instead of opening the port globally. Optionally allow it only if it is new. With `iptables`, this adds rules to the `iptables` config file. With `firewalld`, this creates rich rules to the specified zone. |
-| `firewall_custom_pf_rules` | `[]` | Rules insterted verbatim for `pf` at the end of all other filter rules. Make sure the syntax is correct. |
-| `firewall_nat_rules` | `[]` | List of ports and their protocols to NAT. With `iptables`, add prerouting rules to the `NAT` table. With `firewalld`, adds rich rules to the specified zone. |
-
+| Name                              | Default Value | Description                                                                                                                                                                                                                                            |
+| --------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `firewall_strict`                 | `false`       | Set default policy to `DROP` and restrict types of ICMP traffic                                                                                                                                                                                        |
+| `firewall_default_drop`           | `false`       | Set default policy to `DROP`                                                                                                                                                                                                                           |
+| `firewall_firewalld_default_zone` | `[]`          | Set default zone to `interface`                                                                                                                                                                                                                        |
+| `firewall_allow_icmp`             | `true`        | Allow all ICMP traffic. Has no affect if `firewall_strict` is `True`                                                                                                                                                                                   |
+| `firewall_allowed_tcp_ports`      | `['22']`      | List of allowed TCP ports                                                                                                                                                                                                                              |
+| `firewall_allowed_udp_ports`      | `['161'] `    | List of allowed UDP ports                                                                                                                                                                                                                              |
+| `firewall_rich_rules`             | `[]`          | Specify a source IP and destination port instead of opening the port globally. Optionally allow it only if it is new. With `iptables`, this adds rules to the `iptables` config file. With `firewalld`, this creates rich rules to the specified zone. |
+| `firewall_nat_rules`              | `[]`          | List of ports and their protocols to NAT. With `iptables`, add prerouting rules to the `NAT` table. With `firewalld`, adds rich rules to the specified zone.                                                                                           |
 
 `firewalld` specific variables:
 
-|   Name               | Default Value | Description                                                      |
-|----------------------|---------------|------------------------------------------------------------------|
-| `firewall_firewalld_rules` | `[]` | List of rules to pass to the `firewalld` module. Each module argument is optional. |
+| Name                       | Default Value | Description                                                                        |
+| -------------------------- | ------------- | ---------------------------------------------------------------------------------- |
+| `firewall_firewalld_rules` | `[]`          | List of rules to pass to the `firewalld` module. Each module argument is optional. |
 
 `iptables` specific variables:
 
-|   Name               | Default Value | Description                                                      |
-|----------------------|---------------|------------------------------------------------------------------|
-| `firewall_custom_iptables_rules` | `[]` | Rules inserted verbatim for `iptables`. Make sure the syntax is correct. |
-
-macOS (`pf`) and [application firewall][_alf] specific variables. The custom rules are inserted in the appropciate section in the `pf.conf` template. The syntax must be correct or valiadtion will fail. See the man page of [`pf.conf`](https://man.openbsd.org/pf.conf.5) for details.:
-
-|   Name               | Default Value | Description                                                      |
-|----------------------|---------------|------------------------------------------------------------------|
-| `firewall_alf_global_state` | `on` | State of the macOS [application firewall][_alf]. |
-| `firewall_custom_pf_macros` | `[]` | Custom `pf` macros. |
-| `firewall_custom_pf_table_rules` | `[]` | Custom `pf` table rules. |
-| `firewall_custom_pf_options` | `[]` | Custom `pf` options. |
-| `firewall_custom_pf_normalization_rules` | `[]` | Custom `pf` normalation rules. |
-| `firewall_custom_pf_queuing_rules` | `[]` | Custom `pf` queuing rules. |
-| `firewall_custom_pf_filter_rules` | `[]` | Custom `pf` filter rules. |
+| Name                             | Default Value | Description                                                              |
+| -------------------------------- | ------------- | ------------------------------------------------------------------------ |
+| `firewall_custom_iptables_rules` | `[]`          | Rules inserted verbatim for `iptables`. Make sure the syntax is correct. |
 
 Examples:
 
@@ -85,12 +87,7 @@ Examples:
       - service: ceph
         timeout: 99
 
-    firewall_custom_pf_rules:
-      -
-
-
-Example Playbooks
-----------------
+## Example Playbooks
 
 Restricts ICMP traffic, sets the default policy to `DROP`, passes in TCP and UDP ports to open:
 
@@ -116,12 +113,12 @@ Use advanced rules to restrict access to services based on IP on subnet:
   vars:
     firewall_rich_rules:
       - source: 192.168.40.64/29
-        protocol: 'tcp'
-        dest_port: '22'
+        protocol: "tcp"
+        dest_port: "22"
 
       - source: 192.168.41.0/24
-        protocol: 'tcp'
-        dest_port: '443'
+        protocol: "tcp"
+        dest_port: "443"
 
   roles:
     - sdoran.firewall
@@ -150,10 +147,6 @@ Use a custom port for SSH and block the default port.
         translated_port: 22
 ```
 
-License
--------
+## License
 
-Apache 2.0
-
-
-[_alf]: https://support.apple.com/en-us/HT201642
+MIT / BSD
