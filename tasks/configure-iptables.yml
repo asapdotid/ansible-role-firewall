@@ -13,7 +13,7 @@
     - firewall_config
 
 - name: IPTABLES | Ensure iptables is enabled and started
-  ansible.builtin.service:
+  ansible.builtin.systemd:
     name: iptables
     enabled: yes
     state: started
