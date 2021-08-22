@@ -6,10 +6,6 @@
     - firewalld
     - firewalld_config
 
-- name: debug default default
-  ansible.builtin.debug:
-    var: default_zone
-
 - name: set firewalld default zone
   ansible.builtin.command: /bin/firewall-cmd --set-default-zone={{ firewalld_default_zone }}
   register: result
@@ -18,10 +14,6 @@
   tags:
     - firewalld
     - firewalld_config
-
-- name: debug default default
-  ansible.builtin.debug:
-    var: firewalld_default_zone.0.name
 
 - name: set firewalld zone interfaces
   ansible.builtin.shell: |
