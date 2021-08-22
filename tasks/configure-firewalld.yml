@@ -126,3 +126,14 @@
   tags:
     - firewalld
     - firewalld_config
+
+- name: Ansible replace AllowZoneDrifting in firewalld config
+  ansible.builtin.replace:
+    path: /etc/firewalld/firewalld.conf
+    regexp: '(\s+)AllowZoneDrifting=yes(\s+.*)?$'
+    replace: '\nAllowZoneDrifting=no\2'
+
+- name: Reload firewalld
+  ansible.builtin.debug:
+    msg: "Reload time: {{ '%d-%m-%Y %H:%M:%S' | strftime }}"
+  notify: reload firewalld
