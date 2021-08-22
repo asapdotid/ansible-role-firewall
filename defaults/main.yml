@@ -11,10 +11,11 @@ ufw_default_outgoing_policy: allow
 ufw_logging: "off"
 
 ufw_rules:
-  - rule: allow
-    interface: "{{ ansible_default_ipv4['interface'] }}"
-    to_port: 22
-    protocol: tcp
+  []
+  # - rule: allow
+  #   interface: "{{ ansible_default_ipv4['interface'] }}"
+  #   to_port: 22
+  #   protocol: tcp
 
 # /etc/default/ufw
 ufw_etc_default_ipv6: true
