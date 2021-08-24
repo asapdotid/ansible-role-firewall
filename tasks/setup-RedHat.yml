@@ -1,11 +1,11 @@
 ---
-- name: ensure firewalld is installed
+- name: FIREWALL | Ensure firewalld is installed
   ansible.builtin.yum:
     name: firewalld
     state: present
   tags: firewalld
 
-- name: ensure firewalld is enabled and started
+- name: FIREWALL | Ensure firewalld is enabled and started
   ansible.builtin.service:
     name: firewalld
     enabled: yes
