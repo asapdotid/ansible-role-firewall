@@ -1,5 +1,5 @@
 ---
-- name: configure | create (local facts) directory
+- name: FIREWALL | Configure create (local facts) directory
   ansible.builtin.file:
     path: /etc/ansible/facts.d/
     state: directory
@@ -9,7 +9,7 @@
   tags:
     - ufw-configure-facts
 
-- name: configure | update configuration file(s)
+- name: FIREWALL | Configure update configuration file(s)
   ansible.builtin.template:
     src: "{{ item.src }}"
     dest: "{{ item.dest }}"
@@ -25,14 +25,14 @@
   tags:
     - ufw-configure-facts
 
-- name: configure | reset
+- name: FIREWALL | Configure reset
   community.general.ufw:
     state: reset
   when: configuration is changed
   tags:
     - ufw-configure-reset
 
-- name: configure | default (incoming) policy
+- name: FIREWALL | Configure default (incoming) policy
   community.general.ufw:
     policy: "{{ ufw_default_incoming_policy }}"
     direction: incoming
@@ -41,7 +41,7 @@
     - ufw-configure-default-policy
     - ufw-configure-default-policy-incoming
 
-- name: configure | default (outgoing) policy
+- name: FIREWALL | Configure default (outgoing) policy
   community.general.ufw:
     policy: "{{ ufw_default_outgoing_policy }}"
     direction: outgoing
@@ -50,7 +50,7 @@
     - ufw-configure-default-policy
     - ufw-configure-default-policy-outgoing
 
-- name: configure | rules
+- name: FIREWALL | Configure rules
   community.general.ufw:
     rule: "{{ item.rule }}"
     interface: "{{ item.interface | default('') }}"
@@ -68,7 +68,7 @@
   tags:
     - ufw-configure-rules
 
-- name: configure | logging
+- name: FIREWALL | Configure logging
   community.general.ufw:
     logging: "{{ ufw_logging }}"
   notify: reload ufw

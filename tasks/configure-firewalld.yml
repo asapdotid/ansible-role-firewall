@@ -1,4 +1,4 @@
-- name: get actual firewalld default zone
+- name: FIREWALL | Get actual firewalld default zone
   ansible.builtin.command: /bin/firewall-cmd --get-default-zone
   register: default_zone
   changed_when: false
@@ -6,7 +6,7 @@
     - firewalld
     - firewalld_config
 
-- name: set firewalld default zone
+- name: FIREWALL | Set firewalld default zone
   ansible.builtin.command: /bin/firewall-cmd --set-default-zone={{ firewalld_default_zone }}
   register: result
   when: default_zone.stdout != firewalld_default_zone
@@ -15,7 +15,7 @@
     - firewalld
     - firewalld_config
 
-- name: set firewalld zone interfaces
+- name: FIREWALL | Set firewalld zone interfaces
   ansible.builtin.shell: |
     if [[ "$(/bin/firewall-cmd --get-zone-of-interface={{ item.1 }})" != "{{ item.0.name }}" ]]
     then
@@ -31,7 +31,7 @@
     - firewalld
     - firewalld_config
 
-- name: set firewalld zone source
+- name: FIREWALL | Set firewalld zone source
   ansible.posix.firewalld:
     zone: "{{ item.0.zone }}"
     permanent: "{{ item.0.permanent|default('true') }}"
@@ -45,7 +45,7 @@
     - firewalld
     - firewalld_config
 
-- name: get active firewalld service rules
+- name: FIREWALL | Get active firewalld service rules
   ansible.builtin.shell: set -o pipefail; /bin/firewall-cmd --list-services | sed -e 's/ /\n/g'
   args:
     executable: /bin/bash
@@ -55,7 +55,7 @@
     - firewalld
     - firewalld_config
 
-- name: purge unconfigured firewalld service rules
+- name: FIREWALL | Purge unconfigured firewalld service rules
   ansible.posix.firewalld:
     service: "{{ item }}"
     permanent: true
@@ -68,7 +68,7 @@
     - firewalld
     - firewalld_config
 
-- name: get active firewalld port rules
+- name: FIREWALL | Get active firewalld port rules
   ansible.builtin.shell: set -o pipefail; /bin/firewall-cmd --list-ports | sed -e 's/ /\n/g'
   args:
     executable: /bin/bash
@@ -78,7 +78,7 @@
     - firewalld
     - firewalld_config
 
-- name: purge unconfigured firewalld port rules
+- name: FIREWALL | Purge unconfigured firewalld port rules
   ansible.posix.firewalld:
     port: "{{ item }}"
     permanent: true
@@ -91,7 +91,7 @@
     - firewalld
     - firewalld_config
 
-- name: set firewalld service rules
+- name: FIREWALL | Set firewalld service rules
   ansible.posix.firewalld:
     service: "{{ item.value.service | default(item.key) }}"
     permanent: "{{ item.value.permanent|default('true') }}"
@@ -103,7 +103,7 @@
     - firewalld
     - firewalld_config
 
-- name: set firewalld port rules
+- name: FIREWALL | Set firewalld port rules
   ansible.posix.firewalld:
     port: "{{ item.value.port }}/{{ item.value.protocol|default('tcp') }}"
     permanent: "{{ item.value.permanent|default('true') }}"
@@ -115,7 +115,7 @@
     - firewalld
     - firewalld_config
 
-- name: set firewalld rich rules
+- name: FIREWALL | Set firewalld rich rules
   ansible.posix.firewalld:
     rich_rule: "{{ item.value.rule }}"
     permanent: "{{ item.value.permanent|default('true') }}"
@@ -127,13 +127,13 @@
     - firewalld
     - firewalld_config
 
-- name: Ansible replace AllowZoneDrifting in firewalld config
+- name: FIREWALL | Ansible replace AllowZoneDrifting in firewalld config
   ansible.builtin.replace:
     path: /etc/firewalld/firewalld.conf
     regexp: '(\s+)AllowZoneDrifting=yes(\s+.*)?$'
     replace: '\nAllowZoneDrifting=no\2'
 
-- name: Reload firewalld
+- name: FIREWALL | Reload firewalld
   ansible.builtin.debug:
     msg: "Reload time: {{ '%d-%m-%Y %H:%M:%S' | strftime }}"
   notify: reload firewalld

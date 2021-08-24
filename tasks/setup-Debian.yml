@@ -1,5 +1,5 @@
 ---
-- name: facts | set
+- name: FIREWALL | Facts | Set
   ansible.builtin.set_fact:
     kernel_version: "{{ ansible_kernel | regex_search('^([0-9]+\\.[0-9]+\\.[0-9]+)') }}"
   tags:
@@ -13,7 +13,7 @@
   tags:
     - ufw
 
-- name: install | dependencies
+- name: FIREWALL | install dependencies
   ansible.builtin.apt:
     pkg: ["{{ item }}"]
     state: "present"
