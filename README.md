@@ -5,7 +5,7 @@
 </h1>
 
 <p align="center" style="font-size: 1.2rem;">
-    This role will install and configure the firewall. It supports `iptables`, `firewalld`.
+    This role will install and configure the firewall. It supports `ufw`, `firewalld`.
 
     For Ubuntu firewall service `UFW` and RHEL/CentOS 7 or later, the `firewalld` module is used to configure the firewall.
 
@@ -28,7 +28,8 @@
 
 ## Dependencies
 
-- `ansible.posix` collection
+- `ansible.posix.firewalld` collection
+- `community.general.ufw` Collection
 
 ## Role Variables
 
@@ -36,10 +37,14 @@ These variables apply to all firewall types:
 
 `firewalld` specific variables:
 
-| Name                        | Default Value | Description           |
-| --------------------------- | ------------- | --------------------- |
-| `firewalld_default_zone`    | `public`      | Default zone.         |
-| `firewalld_zone_interfaces` | `[]`          | Rules zone interface. |
+| Name                        | Default Value | Description     |
+| --------------------------- | ------------- | --------------- |
+| `firewalld_default_zone`    | `public`      | Default zone.   |
+| `firewalld_zone_interfaces` | `[]`          | Zone interface. |
+| `firewalld_zone_source`     | `[]`          | Zone source.    |
+| `firewalld_service_rules`   | `[]`          | Services rules. |
+| `firewalld_port_rules`      | `[]`          | Port rules.     |
+| `firewalld_rich_rules`      | `[]`          | Rich rules.     |
 
 `ufw` specific variables:
 

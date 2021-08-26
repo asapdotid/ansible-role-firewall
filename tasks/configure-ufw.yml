@@ -7,7 +7,8 @@
     group: root
     mode: 0755
   tags:
-    - ufw-configure-facts
+    - firewall
+    - firewall_config
 
 - name: FIREWALL | Configure update configuration file(s)
   ansible.builtin.template:
@@ -23,14 +24,16 @@
       dest: /etc/ansible/facts.d/ufw.fact
   register: configuration
   tags:
-    - ufw-configure-facts
+    - firewall
+    - firewall_config
 
 - name: FIREWALL | Configure reset
   community.general.ufw:
     state: reset
   when: configuration is changed
   tags:
-    - ufw-configure-reset
+    - firewall
+    - firewall_config
 
 - name: FIREWALL | Configure default (incoming) policy
   community.general.ufw:
@@ -38,8 +41,8 @@
     direction: incoming
   notify: reload ufw
   tags:
-    - ufw-configure-default-policy
-    - ufw-configure-default-policy-incoming
+    - firewall
+    - firewall_config
 
 - name: FIREWALL | Configure default (outgoing) policy
   community.general.ufw:
@@ -47,8 +50,8 @@
     direction: outgoing
   notify: reload ufw
   tags:
-    - ufw-configure-default-policy
-    - ufw-configure-default-policy-outgoing
+    - firewall
+    - firewall_config
 
 - name: FIREWALL | Configure rules
   community.general.ufw:
@@ -66,11 +69,20 @@
   with_items: "{{ ufw_rules }}"
   notify: reload ufw
   tags:
-    - ufw-configure-rules
+    - firewall
+    - firewall_config
+
+- name: start and enable service
+  community.general.ufw:
+    state: enabled
+  tags:
+    - firewall
+    - firewall_config
 
 - name: FIREWALL | Configure logging
   community.general.ufw:
     logging: "{{ ufw_logging }}"
   notify: reload ufw
   tags:
-    - ufw-configure-logging
+    - firewall
+    - firewall_config
