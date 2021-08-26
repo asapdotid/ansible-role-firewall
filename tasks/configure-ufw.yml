@@ -72,7 +72,7 @@
     - firewall
     - firewall_config
 
-- name: start and enable service
+- name: FIREWALL | Start and enable service
   community.general.ufw:
     state: enabled
   tags:
