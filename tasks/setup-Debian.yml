@@ -3,7 +3,7 @@
   ansible.builtin.set_fact:
     kernel_version: "{{ ansible_kernel | regex_search('^([0-9]+\\.[0-9]+\\.[0-9]+)') }}"
   tags:
-    - ufw
+    - firewall
 
 # see https://askubuntu.com/a/1064533/261010, https://www.spinics.net/lists/netfilter-devel/msg55682.html
 - include: fix-dropped-ssh-sessions.yml
@@ -11,7 +11,7 @@
     - kernel_version is version('4.14', '>=')
     - kernel_version is version('5', '<')
   tags:
-    - ufw
+    - firewall
 
 - name: FIREWALL | install dependencies
   ansible.builtin.apt:
@@ -21,4 +21,12 @@
     cache_valid_time: 5400
   with_items: "{{ ufw_dependencies }}"
   tags:
-    - ufw
+    - firewall
+
+- name: FIREWALL | Ensure ufw is enabled and started
+  ansible.builtin.service:
+    name: ufw
+    enabled: yes
+    state: started
+  tags:
+    - firewall

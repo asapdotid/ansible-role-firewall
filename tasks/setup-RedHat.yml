@@ -3,11 +3,13 @@
   ansible.builtin.yum:
     name: firewalld
     state: present
-  tags: firewalld
+  tags:
+    - firewall
 
 - name: FIREWALL | Ensure firewalld is enabled and started
   ansible.builtin.service:
     name: firewalld
     enabled: yes
     state: started
-  tags: firewalld
+  tags:
+    - firewall

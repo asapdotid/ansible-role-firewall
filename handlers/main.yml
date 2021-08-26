@@ -11,3 +11,8 @@
 - name: reload ufw
   community.general.ufw:
     state: reloaded
+
+- name: restart ufw
+  ansible.builtin.service:
+    name: ufw
+    state: restarted
