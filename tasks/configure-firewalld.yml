@@ -1,3 +1,12 @@
+- name: FIREWALLD | Start and enable firewalld
+  ansible.builtin.service:
+    name: "{{ _firewall_name }}"
+    enabled: yes
+    state: started
+  tags:
+    - firewall
+    - firewall_config
+
 - name: FIREWALL | Get actual firewalld default zone
   ansible.builtin.command: /bin/firewall-cmd --get-default-zone
   register: default_zone
@@ -31,101 +40,71 @@
     - firewalld
     - firewalld_config
 
-- name: FIREWALL | Set firewalld zone source
+- name: FIREWALLD | Open TCP ports in firewalld
   ansible.posix.firewalld:
-    zone: "{{ item.0.zone }}"
-    permanent: "{{ item.0.permanent|default('true') }}"
-    immediate: "{{ item.0.immediate|default('true') }}"
-    state: "{{ item.0.state|default('enabled') }}"
-    source: "{{ item.1 }}"
-  with_subelements:
-    - "{{ firewalld_zone_source|default({}) }}"
-    - "source"
+    permanent: "{{ item.permanent | default('yes') }}"
+    state: enabled
+    port: "{{ item.port | default(item) }}/tcp"
+    zone: "{{ item.zone | default(omit) }}"
+  with_items: "{{ firewalld_allowed_tcp_ports }}"
+  notify: restart firewalld
   tags:
-    - firewalld
-    - firewalld_config
+    - firewall
+    - firewall_config
 
-- name: FIREWALL | Get active firewalld service rules
-  ansible.builtin.shell: set -o pipefail; /bin/firewall-cmd --list-services | sed -e 's/ /\n/g'
-  args:
-    executable: /bin/bash
-  register: active_services
-  changed_when: false
-  tags:
-    - firewalld
-    - firewalld_config
-
-- name: FIREWALL | Purge unconfigured firewalld service rules
+- name: FIREWALLD | Open UDP ports in firewalld
   ansible.posix.firewalld:
-    service: "{{ item }}"
-    permanent: true
-    immediate: true
-    state: disabled
-    zone: "{{ firewalld_default_zone|default('public') }}"
-  with_items: "{{ active_services.stdout_lines }}"
-  when: firewalld_purge_services and item not in firewalld_service_rules
+    permanent: "{{ item.permanent | default('yes') }}"
+    state: enabled
+    port: "{{ item.port | default(item) }}/udp"
+    zone: "{{ item.zone | default(omit) }}"
+  with_items: "{{ firewalld_allowed_udp_ports }}"
+  notify: restart firewalld
   tags:
-    - firewalld
-    - firewalld_config
+    - firewall
+    - firewall_config
 
-- name: FIREWALL | Get active firewalld port rules
-  ansible.builtin.shell: set -o pipefail; /bin/firewall-cmd --list-ports | sed -e 's/ /\n/g'
-  args:
-    executable: /bin/bash
-  register: active_ports
-  changed_when: false
-  tags:
-    - firewalld
-    - firewalld_config
-
-- name: FIREWALL | Purge unconfigured firewalld port rules
+- name: FIREWALLD | Configure NAT rules
   ansible.posix.firewalld:
-    port: "{{ item }}"
-    permanent: true
-    immediate: true
-    state: disabled
-    zone: "{{ firewalld_default_zone|default('public') }}"
-  with_items: "{{ active_ports.stdout_lines }}"
-  when: firewalld_purge_services and item not in firewalld_service_rules
+    state: enabled
+    permanent: yes
+    zone: "{{ item.zone | default(omit) }}"
+    rich_rule: rule family={{ item.family | default('ipv4') }} forward-port port={{ item.original_port }} protocol={{ item.protocol }} to-port={{ item.translated_port }}
+  with_items: "{{ firewalld_nat_rules }}"
+  notify: restart firewalld
   tags:
-    - firewalld
-    - firewalld_config
+    - firewall
+    - firewall_config
 
-- name: FIREWALL | Set firewalld service rules
+- name: FIREWALLD | Configure rich rules
   ansible.posix.firewalld:
-    service: "{{ item.value.service | default(item.key) }}"
-    permanent: "{{ item.value.permanent|default('true') }}"
-    immediate: "{{ item.value.immediate|default('true') }}"
-    state: "{{ item.value.state|default('enabled') }}"
-    zone: "{{ item.value.zone|default('public') }}"
-  with_dict: "{{ firewalld_service_rules|default({}) }}"
+    state: enabled
+    permanent: yes
+    zone: "{{ item.zone | default(omit) }}"
+    rich_rule: rule family={{ item.family | default('ipv4') }} port port={{ item.dest_port }} protocol={{ item.protocol }} source address={{ item.source }} accept
+  with_items: "{{ firewalld_rich_rules }}"
   tags:
-    - firewalld
-    - firewalld_config
+    - firewall
+    - firewall_config
 
-- name: FIREWALL | Set firewalld port rules
+- name: FIREWALLD | Configure additional firewalld rules
   ansible.posix.firewalld:
-    port: "{{ item.value.port }}/{{ item.value.protocol|default('tcp') }}"
-    permanent: "{{ item.value.permanent|default('true') }}"
-    immediate: "{{ item.value.immediate|default('true') }}"
-    state: "{{ item.value.state|default('enabled') }}"
-    zone: "{{ item.value.zone|default('public') }}"
-  with_dict: "{{ firewalld_port_rules|default({}) }}"
+    immediate: "{{ item.immediate | default(omit) }}"
+    interface: "{{ item.interface | default(omit) }}"
+    masquerade: "{{ item.masquerade | default(omit) }}"
+    permanent: "{{ item.permanent | default('yes') }}"
+    port: "{{ item.port ~ '/' ~ item.protocol if (item.port is defined and item.protocol is defined) else omit }}"
+    rich_rule: "{{ item.rich_rule | default(omit) }}"
+    service: "{{ item.service | default(omit) }}"
+    source: "{{ item.source | default(omit) }}"
+    state: "{{ item.state | default('enabled') }}"
+    timeout: "{{ item.timeout | default(omit) }}"
+    zone: "{{ item.zone | default(omit) }}"
+  with_items: "{{ firewalld_rules }}"
+  notify: restart firewalld
   tags:
-    - firewalld
-    - firewalld_config
-
-- name: FIREWALL | Set firewalld rich rules
-  ansible.posix.firewalld:
-    rich_rule: "{{ item.value.rule }}"
-    permanent: "{{ item.value.permanent|default('true') }}"
-    immediate: "{{ item.value.immediate|default('true') }}"
-    state: "{{ item.value.state|default('enabled') }}"
-    zone: "{{ item.value.zone|default('public') }}"
-  with_dict: "{{ firewalld_rich_rules|default({}) }}"
-  tags:
-    - firewalld
-    - firewalld_config
+    - firewall
+    - firewall_config
 
 - name: FIREWALL | Ansible replace AllowZoneDrifting in firewalld config
   ansible.builtin.replace:
@@ -137,3 +116,31 @@
   ansible.builtin.debug:
     msg: "Reload time: {{ '%d-%m-%Y %H:%M:%S' | strftime }}"
   notify: reload firewalld
+
+- name: FIREWALL | Get active firewalld service rules
+  ansible.builtin.shell: set -o pipefail; /bin/firewall-cmd --list-services | sed -e 's/ /\n/g'
+  args:
+    executable: /bin/bash
+  register: active_services
+  changed_when: false
+  tags:
+    - firewalld
+    - firewalld_config
+
+- name: FIREWALL | Debug active firewalld service rules
+  debug:
+    var: active_services.stdout_lines
+
+- name: FIREWALL | Get active firewalld port rules
+  ansible.builtin.shell: set -o pipefail; /bin/firewall-cmd --list-ports | sed -e 's/ /\n/g'
+  args:
+    executable: /bin/bash
+  register: active_ports
+  changed_when: false
+  tags:
+    - firewalld
+    - firewalld_config
+
+- name: FIREWALL | Debug active firewalld port rules
+  debug:
+    var: active_ports.stdout_lines

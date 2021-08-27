@@ -1,15 +1,17 @@
 ---
 # Firewalld
-firewalld_purge_services: false
 firewalld_default_zone: "public"
 firewalld_zone_interfaces: []
+firewalld_allowed_tcp_ports: []
+firewalld_allowed_udp_ports: []
+firewalld_nat_rules: []
+firewalld_rich_rules: []
+firewalld_rules: []
 
 # UFW
 ufw_default_incoming_policy: deny
 ufw_default_outgoing_policy: allow
-
 ufw_logging: "off"
-
 ufw_rules:
   []
   # - rule: allow
