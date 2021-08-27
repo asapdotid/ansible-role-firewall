@@ -37,14 +37,15 @@ These variables apply to all firewall types:
 
 `firewalld` specific variables:
 
-| Name                        | Default Value | Description     |
-| --------------------------- | ------------- | --------------- |
-| `firewalld_default_zone`    | `public`      | Default zone.   |
-| `firewalld_zone_interfaces` | `[]`          | Zone interface. |
-| `firewalld_zone_source`     | `[]`          | Zone source.    |
-| `firewalld_service_rules`   | `[]`          | Services rules. |
-| `firewalld_port_rules`      | `[]`          | Port rules.     |
-| `firewalld_rich_rules`      | `[]`          | Rich rules.     |
+| Name                          | Default Value | Description                                                                                                                                                                             |
+| ----------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `firewalld_default_zone`      | `public`      | Default zone.                                                                                                                                                                           |
+| `firewalld_zone_interfaces`   | `[]`          | Zone interface.                                                                                                                                                                         |
+| `firewalld_allowed_tcp_ports` | `['22']`      | List of allowed TCP ports.                                                                                                                                                              |
+| `firewalld_allowed_udp_ports` | `['161']`     | List of allowed UDP ports.                                                                                                                                                              |
+| `firewalld_nat_rules`         | `[]`          | Specify a source IP and destination port instead of opening the port globally. Optionally allow it only if it is new. With `firewalld`, this creates rich rules to the specified zone.. |
+| `firewalld_rich_rules`        | `[]`          | List of ports and their protocols to NAT. With firewalld, adds rich rules to the specified zone.                                                                                        |
+| `firewalld_rules`             | `[]`          | List of rules to pass to the firewalld module. Each module argument is optional.                                                                                                        |
 
 `ufw` specific variables:
 
@@ -52,6 +53,60 @@ These variables apply to all firewall types:
 | ------------- | ------------- | ---------------------- |
 | `ufw_logging` | `off`         | UFW logging on or off. |
 | `ufw_rules`   | `[]`          | UFW Roles.             |
+
+## Example
+
+```yaml
+- hosts: all
+  roles:
+    - role: asapdotid.firewall
+```
+
+Variables pace in `vars/main.yml` on your project
+
+### Firewalld
+
+```yaml
+firewall_allowed_tcp_ports:
+  - 22
+  - 80
+  - 443
+
+firewall_allowed_udp_ports:
+  - 123
+  - 67
+
+firewall_nat_rules:
+  - protocol: tcp
+    original_port: 4022
+    translated_port: 22
+
+firewall_rich_rules:
+  - source: "10.0.1.17"
+    protocol: "tcp"
+    dest_port: 22
+    new: true
+  - source: "192.168.0.0/24"
+    protocol: "tcp"
+    dest_port: 22
+
+firewalld_rules:
+  - service: "ssh"
+    immediate: "yes"
+    zone: "public"
+```
+
+### UFW
+
+```yaml
+ufw_logging: 'off'
+
+ufw_rules:
+  - rule: 'allow',
+    to_port: 'ssh',
+    proto: 'tcp',
+    comment: 'allow incoming connection on standard ssh port'
+```
 
 ## License
 
