@@ -1,11 +1,4 @@
 ---
-- name: FIREWALL | Start and enable service
-  community.general.ufw:
-    state: enabled
-  tags:
-    - firewall
-    - firewall_config
-
 - name: FIREWALL | Configure create (local facts) directory
   ansible.builtin.file:
     path: /etc/ansible/facts.d/
@@ -83,6 +76,13 @@
   community.general.ufw:
     logging: "{{ ufw_logging }}"
   notify: reload ufw
+  tags:
+    - firewall
+    - firewall_config
+
+- name: FIREWALL | Start and enable service
+  community.general.ufw:
+    state: enabled
   tags:
     - firewall
     - firewall_config
