@@ -13,11 +13,6 @@
   tags:
     - firewall
 
-- name: FIREWALL | Fix ssh session firewall
-  ansible.builtin.include_tasks: fix-dropped-ssh-sessions.yml
-  tags:
-    - fix_ssh_firewall
-
 - name: FIREWALL | Setup firewall
   ansible.builtin.include_tasks: setup-{{ ansible_facts.os_family }}.yml
   tags:
