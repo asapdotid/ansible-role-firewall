@@ -5,10 +5,8 @@
 </h1>
 
 <p align="center" style="font-size: 1.2rem;">
-    This role will install and configure the firewall. It supports `ufw`, `firewalld`.
-
-    For Ubuntu firewall service `UFW` and RHEL/CentOS 7 or later, the `firewalld` module is used to configure the firewall.
-
+    This role will install and configure the firewall. It supports <b>ufw</b>, <b>firewalld</b>.<br />
+    For Ubuntu firewall service <b>ufw</b> and RHEL/CentOS 7 or later, the <b>firewalld</b> module is used to configure the firewall.
 </p>
 
 <p align="center">
@@ -18,12 +16,6 @@
 </a>
 <a href="LICENSE.md">
   <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="Licence">
-</a>
-<a href="https://ubuntu.com/">
-  <img src="https://img.shields.io/badge/ubuntu-20.x-orange?style=flat&logo=ubuntu" alt="Distribution">
-</a>
-<a href="https://www.centos.org/">
-  <img src="https://img.shields.io/badge/CentOS-8-green?style=flat&logo=centos" alt="Distribution">
 </a>
 
 ## Dependencies
@@ -67,21 +59,21 @@ Variables pace in `vars/main.yml` on your project
 ### Firewalld
 
 ```yaml
-firewall_allowed_tcp_ports:
+firewalld_allowed_tcp_ports:
   - 22
   - 80
   - 443
 
-firewall_allowed_udp_ports:
+firewalld_allowed_udp_ports:
   - 123
   - 67
 
-firewall_nat_rules:
+firewalld_nat_rules:
   - protocol: tcp
     original_port: 4022
     translated_port: 22
 
-firewall_rich_rules:
+firewalld_rich_rules:
   - source: "10.0.1.17"
     protocol: "tcp"
     dest_port: 22

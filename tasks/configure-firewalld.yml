@@ -1,7 +1,7 @@
 - name: FIREWALLD | Start and enable firewalld
   ansible.builtin.service:
     name: "{{ _firewall_name }}"
-    enabled: yes
+    enabled: true
     state: started
   tags:
     - firewall

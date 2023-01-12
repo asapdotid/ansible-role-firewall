@@ -4,7 +4,7 @@
     path: /proc/sys/net/netfilter/nf_conntrack_tcp_be_liberal
   register: _nf_conntrack_tcp_be_liberal
 
-- name: FIREWALL | Fix dropped ssh sessions | configure kernel
+- name: FIREWALL | Fix dropped ssh sessions configure kernel
   ansible.posix.sysctl:
     name: net.netfilter.nf_conntrack_tcp_be_liberal
     value: "1"

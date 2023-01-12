@@ -1,5 +1,5 @@
 ---
-- name: FIREWALL | Facts | Set
+- name: FIREWALL | Facts
   ansible.builtin.set_fact:
     kernel_version: "{{ ansible_kernel | regex_search('^([0-9]+\\.[0-9]+\\.[0-9]+)') }}"
   tags:
@@ -13,7 +13,7 @@
   tags:
     - firewall
 
-- name: FIREWALL | install dependencies
+- name: FIREWALL | Install dependencies
   ansible.builtin.apt:
     pkg: ["{{ item }}"]
     state: "present"
