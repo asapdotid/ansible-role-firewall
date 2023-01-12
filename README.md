@@ -91,13 +91,13 @@ firewalld_rules:
 ### UFW
 
 ```yaml
-ufw_logging: 'off'
+ufw_logging: "off"
 
 ufw_rules:
-  - rule: 'allow',
-    to_port: 'ssh',
-    proto: 'tcp',
-    comment: 'allow incoming connection on standard ssh port'
+  - rule: "allow"
+    to_port: "ssh"
+    proto: "tcp"
+    comment: "allow incoming connection on standard ssh port"
 ```
 
 ## License
