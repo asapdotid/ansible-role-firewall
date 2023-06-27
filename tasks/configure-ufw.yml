@@ -30,7 +30,7 @@
 - name: FIREWALL | Configure reset
   community.general.ufw:
     state: reset
-  when: configuration is changed
+  when: configuration is changed # noqa: no-handler
   tags:
     - firewall
     - firewall_config
@@ -66,6 +66,7 @@
     route: "{{ item.route | default(omit) }}"
     log: "{{ item.log | default(false) }}"
     comment: "{{ item.comment | default(omit) }}"
+    delete: "{{ item.delete | default(false) }}"
   with_items: "{{ ufw_rules }}"
   notify: reload ufw
   tags:

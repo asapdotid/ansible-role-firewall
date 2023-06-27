@@ -98,6 +98,12 @@ ufw_rules:
     to_port: "ssh"
     proto: "tcp"
     comment: "allow incoming connection on standard ssh port"
+  # Delete rule
+  - rule: "allow"
+    to_port: "http"
+    proto: "tcp"
+    comment: "allow incoming connection on standard http port"
+    delete: true
 ```
 
 ## License
