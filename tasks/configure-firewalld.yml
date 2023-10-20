@@ -35,7 +35,7 @@
     - interfaces
   register: shell_result
   changed_when: shell_result.stdout | join('') is search('changed')
-  notify: restart firewalld
+  notify: (Heandler) Restart firewalld
   tags:
     - firewalld
     - firewalld_config
@@ -47,7 +47,7 @@
     port: "{{ item.port | default(item) }}/tcp"
     zone: "{{ item.zone | default(omit) }}"
   with_items: "{{ firewalld_allowed_tcp_ports }}"
-  notify: restart firewalld
+  notify: (Heandler) Restart firewalld
   tags:
     - firewall
     - firewall_config
@@ -59,7 +59,7 @@
     port: "{{ item.port | default(item) }}/udp"
     zone: "{{ item.zone | default(omit) }}"
   with_items: "{{ firewalld_allowed_udp_ports }}"
-  notify: restart firewalld
+  notify: (Heandler) Restart firewalld
   tags:
     - firewall
     - firewall_config
@@ -71,7 +71,7 @@
     zone: "{{ item.zone | default(omit) }}"
     rich_rule: rule family={{ item.family | default('ipv4') }} forward-port port={{ item.original_port }} protocol={{ item.protocol }} to-port={{ item.translated_port }}
   with_items: "{{ firewalld_nat_rules }}"
-  notify: restart firewalld
+  notify: (Heandler) Restart firewalld
   tags:
     - firewall
     - firewall_config
@@ -101,7 +101,7 @@
     timeout: "{{ item.timeout | default(omit) }}"
     zone: "{{ item.zone | default(omit) }}"
   with_items: "{{ firewalld_rules }}"
-  notify: restart firewalld
+  notify: (Heandler) Restart firewalld
   tags:
     - firewall
     - firewall_config
@@ -128,7 +128,7 @@
     - firewalld_config
 
 - name: FIREWALL | Debug active firewalld service rules
-  debug:
+  ansible.builtin.debug:
     var: active_services.stdout_lines
 
 - name: FIREWALL | Get active firewalld port rules
@@ -142,5 +142,5 @@
     - firewalld_config
 
 - name: FIREWALL | Debug active firewalld port rules
-  debug:
+  ansible.builtin.debug:
     var: active_ports.stdout_lines

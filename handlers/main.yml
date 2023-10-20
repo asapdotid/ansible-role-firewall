@@ -1,18 +1,18 @@
-- name: reload firewalld
+- name: (Heandler) Reload firewalld
   ansible.builtin.service:
     name: firewalld
     state: reloaded
 
-- name: restart firewalld
+- name: (Heandler) Restart firewalld
   ansible.builtin.service:
     name: firewalld
     state: restarted
 
-- name: reload ufw
+- name: (Heandler) Reload ufw
   community.general.ufw:
     state: reloaded
 
-- name: restart ufw
+- name: (Heandler) Restart ufw
   ansible.builtin.service:
     name: ufw
     state: restarted

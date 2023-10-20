@@ -39,7 +39,7 @@
   community.general.ufw:
     policy: "{{ ufw_default_incoming_policy }}"
     direction: incoming
-  notify: reload ufw
+  notify: (Heandler) Reload ufw
   tags:
     - firewall
     - firewall_config
@@ -48,7 +48,7 @@
   community.general.ufw:
     policy: "{{ ufw_default_outgoing_policy }}"
     direction: outgoing
-  notify: reload ufw
+  notify: (Heandler) Reload ufw
   tags:
     - firewall
     - firewall_config
@@ -68,7 +68,7 @@
     comment: "{{ item.comment | default(omit) }}"
     delete: "{{ item.delete | default(false) }}"
   with_items: "{{ ufw_rules }}"
-  notify: reload ufw
+  notify: (Heandler) Reload ufw
   tags:
     - firewall
     - firewall_config
@@ -76,7 +76,7 @@
 - name: FIREWALL | Configure logging
   community.general.ufw:
     logging: "{{ ufw_logging }}"
-  notify: reload ufw
+  notify: (Heandler) Reload ufw
   tags:
     - firewall
     - firewall_config
