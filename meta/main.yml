@@ -1,6 +1,6 @@
 galaxy_info:
   role_name: firewall
-  author: Asapdotid
+  author: asapdotid
   description: Install and configure the firewall on Linux
   company: none
 
