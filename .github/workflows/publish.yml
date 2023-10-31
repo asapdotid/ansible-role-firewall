@@ -12,10 +12,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
+      - name: Get the version name from the tags
+        run: echo "RELEASE_VERSION=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
       - name: Release Ansible Role to Galaxy
-        uses: robertdebock/galaxy-action@1.2.1
+        uses: artis3n/ansible_galaxy_collection@v2
         with:
-          galaxy_api_key: ${{ secrets.GALAXY_API_KEY }}
+          api_key: '${{ secrets.GALAXY_API_KEY }}'
+          galaxy_version: '${{ env.RELEASE_VERSION }}'
