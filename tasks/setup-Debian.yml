@@ -17,7 +17,7 @@
 - name: FIREWALL | Install dependencies
   ansible.builtin.apt:
     pkg: ["{{ item }}"]
-    state: "present"
+    state: present
     update_cache: true
     cache_valid_time: 5400
   with_items: "{{ ufw_dependencies }}"
